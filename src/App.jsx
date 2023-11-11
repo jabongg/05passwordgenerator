@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react'
+import { useCallback, useState, useEffect, useRef } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -9,7 +9,10 @@ function App() {
   const [length, setLength] = useState(8);
   const [numberAllowed, setNumberAllowed] = useState(false);
   const [characterAllowed, setCharacterAllowed] = useState(false);
-  const [Password, setPassword] = useState("abcDWkkj")
+  const [password, setPassword] = useState("abcDWkkj")
+
+  //useRef hook for using reference
+  const passwordRef = useRef(null);
 
   //useCallback cache a function definiton for multiple times call
   const passGenerator = useCallback(() => {
@@ -29,6 +32,22 @@ function App() {
       passGenerator();
   }, [length, numberAllowed, characterAllowed, passGenerator]);
 
+  const copyPasswordToClipboard = useCallback(() => {
+    passwordRef.current?.select();  
+    passwordRef.current?.setSelectionRange(0, length - 1);
+    window.navigator.clipboard.writeText(password);
+    buttonList();
+  }, [password]);
+
+  // highlight button when clicked on copy button
+  const [activeButtonIndex, setActiveButtonIndex] = useState(1);
+
+  const buttonList = useCallback(() => {
+    () => setActiveButtonIndex(0);
+  }, []);
+
+  
+  
   return (
     <>
 
@@ -37,11 +56,17 @@ function App() {
 
     <div className="flex shadow rounded-lg overflow-hidden mb-4">
       <input type="text" 
-      value={Password} 
+      value={password} 
       className="outline-none w-full py-1 px-3"
       placeholder="pasSWorD"
+      ref={passwordRef}
       readOnly />
-      <button className="outline-none bg-blue-700 text-white px-3 py-1 shrink-0">copy</button>
+      <button id="copyButton"
+      onClick={copyPasswordToClipboard}
+      className={activeButtonIndex === 0 ? "bg-green-700 text-white" : "bg-blue-700"}
+        
+      // className="outline-none bg-blue-700 text-white px-3 py-1 shrink-0"
+      >copy</button>
       </div>
 
       <div className="flex shadow rounded-lg overflow-hidden mb-4">
