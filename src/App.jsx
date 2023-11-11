@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -14,15 +14,20 @@ function App() {
   //useCallback cache a function definiton for multiple times call
   const passGenerator = useCallback(() => {
     let pass = "";
-    const str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    
+    let str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    if (numberAllowed) str += "0123456789";
+    if (characterAllowed) str += "~!@#$%^&*()-="
     for (let i = 0; i < length; i++) {
-      let  char = Math.floor(Math.random() * charset.length + 1);
-      pass = str.charAt(char);
+      let char = Math.floor(Math.random() * str.length + 1);
+      pass += str.charAt(char);
     }
 
     setPassword(pass);
   }, [length, numberAllowed, characterAllowed, setPassword]);
+
+  useEffect(() => {
+      passGenerator();
+  }, [length, numberAllowed, characterAllowed, passGenerator]);
 
   return (
     <>
@@ -35,9 +40,7 @@ function App() {
       value={Password} 
       className="outline-none w-full py-1 px-3"
       placeholder="pasSWorD"
-      readOnly>
-
-      </input>
+      readOnly />
       <button className="outline-none bg-blue-700 text-white px-3 py-1 shrink-0">copy</button>
       </div>
 
